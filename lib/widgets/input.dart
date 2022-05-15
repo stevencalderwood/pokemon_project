@@ -18,8 +18,8 @@ class _InputFieldState extends State<InputField> {
       decoration: InputDecoration(hintText: 'Insert pokemon name or id', errorText: _errorText),
       onSubmitted: (text) {
         if (text.isEmpty) return;
-        final ServiceResult result = pokemonValidator(text);
-        setState(() => _errorText = result.error.isNotEmpty ? result.error : null);
+        final ServiceResult result = pokemonValidator(value: text);
+        setState(() => _errorText = result.error);
         if (_errorText != null) return;
         widget.onSubmit(result.data.toString());
       },
