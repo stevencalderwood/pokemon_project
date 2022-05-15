@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pokemon_project/controllers/controller.dart';
+import 'package:pokemon_project/widgets/input.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({Key? key}) : super(key: key);
@@ -33,15 +34,9 @@ class _HomeViewState extends State<HomeView> {
   }
 
   void _search(String search) {
-    if (search == '') {
-      setState(() {
-        _filteredPokemon = [];
-      });
-      return;
-    }
-    setState(() {
-      _filteredPokemon = _controller.search(search);
-    });
+    final String url = 'https://pokeapi.co/api/v2/pokemon/$search';
+    print(url);
+    // TODO: ora che abbiamo l'url possiamo fare richiesta get e gestire errore "not found"
   }
 
   @override
@@ -65,14 +60,11 @@ class _HomeViewState extends State<HomeView> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: const Text('ALL POKEMON'),
+          title: const Text('Pokemon Project 1'),
         ),
         body: Column(
           children: [
-            TextField(
-              decoration: const InputDecoration(hintText: 'Insert pokemon name or id'),
-              onChanged: (text) => _search(text),
-            ),
+            InputField(onSubmit: _search),
             Expanded(
               child: _filteredPokemon.isEmpty
                   ? SingleChildScrollView(
