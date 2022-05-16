@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pokemon_project/constants/constants.dart';
 import 'package:pokemon_project/models/pokemon.dart';
 import 'package:pokemon_project/controllers/controller.dart';
-import 'package:pokemon_project/widgets/image.dart';
+import 'package:pokemon_project/widgets/sprite_widget.dart';
 
 class InfoView extends StatefulWidget {
   final Pokemon pokemon;

@@ -3,16 +3,16 @@ import 'package:pokemon_project/constants/constants.dart';
 import 'package:pokemon_project/controllers/pokemon_finder.dart';
 import 'package:pokemon_project/models/service_result.dart';
 
-class InputField extends StatefulWidget {
+class InputWidget extends StatefulWidget {
   final void Function(String) onSubmit;
   final void Function() onReset;
-  const InputField({Key? key, required this.onSubmit, required this.onReset}) : super(key: key);
+  const InputWidget({Key? key, required this.onSubmit, required this.onReset}) : super(key: key);
 
   @override
-  State<InputField> createState() => _InputFieldState();
+  State<InputWidget> createState() => _InputWidgetState();
 }
 
-class _InputFieldState extends State<InputField> {
+class _InputWidgetState extends State<InputWidget> {
   String? _errorText;
   late final TextEditingController _controller;
 

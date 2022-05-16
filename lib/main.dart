@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pokemon_project/views/home_view.dart';
+import 'package:pokemon_project/views/search_view.dart';
 import 'package:pokemon_project/views/second_view.dart';
 
 void main() {
@@ -17,8 +18,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(primarySwatch: Colors.blue),
       initialRoute: '/v1/',
       routes: {
-        '/v1/': (context) => const HomeView(),
+        '/v1/': (context) => const FirstView(),
         '/v2/': (context) => const SecondView(),
+        '/v2/search/': (context) => const SearchView(),
       },
     );
   }

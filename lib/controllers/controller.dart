@@ -1,7 +1,7 @@
 import 'package:pokemon_project/models/pokemon.dart';
 import 'package:pokemon_project/models/api.dart';
 import 'package:flutter/material.dart';
-import 'package:pokemon_project/widgets/card.dart';
+import 'package:pokemon_project/widgets/card_widget.dart';
 
 abstract class Controller {
   final List<Pokemon> pokemonList = [];
@@ -16,7 +16,7 @@ abstract class Controller {
   }
 
   List<Widget> toWidget(List<Pokemon> pokemon) {
-    return pokemon.map<Widget>((e) => PokeCard(pokemon: e)).toList();
+    return pokemon.map<Widget>((e) => CardWidget(pokemon: e)).toList();
   }
 
   List<Widget> search(String filter) {

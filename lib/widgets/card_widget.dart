@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:pokemon_project/models/pokemon.dart';
 import 'package:pokemon_project/views/info_view.dart';
 
-class PokeCard extends StatelessWidget {
+class CardWidget extends StatelessWidget {
   final Pokemon pokemon;
   final PokemonInfo? pokemonInfo;
-  const PokeCard({Key? key, required this.pokemon, this.pokemonInfo}) : super(key: key);
+  const CardWidget({Key? key, required this.pokemon, this.pokemonInfo}) : super(key: key);
 
   void _navigateToPokemonScreen(Pokemon poke, BuildContext context) {
     Navigator.push(context, MaterialPageRoute(builder: (_) {
