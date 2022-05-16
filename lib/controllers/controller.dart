@@ -10,10 +10,12 @@ abstract class Controller {
 
 class Service {
   final List<Pokemon> _pokemonList = [];
-  String _requestUrl = Constants.allPokemonAPI;
+  String _requestUrl = Constant.pokemonAPI;
 
-  static Future<List> getPokemonInfo(
-      {required String url, Future<Map<String, dynamic>> Function(String) apiCall = Api.getRequest}) async {
+  static Future<List> getPokemonInfo({
+    required String url,
+    Future<Map<String, dynamic>> Function(String) apiCall = Api.getRequest,
+  }) async {
     Map<String, dynamic> result = await apiCall(url);
     if (result['error'] != null) return [];
     return [PokemonInfo.fromJson(result)];
@@ -38,7 +40,7 @@ class Service {
 
   List<Widget> search(String filter) {
     String s = filter.toLowerCase();
-    List<Pokemon> list = _pokemonList.where((e) => e.name.contains(s) || e.id.startsWith(s)).toList();
+    List<Pokemon> list = _pokemonList.where((e) => e.name.contains(s) || e.id == s).toList();
     return _toWidget(list);
   }
 

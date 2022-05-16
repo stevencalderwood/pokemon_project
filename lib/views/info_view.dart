@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pokemon_project/constants/constants.dart';
 import 'package:pokemon_project/models/pokemon.dart';
 import 'package:pokemon_project/controllers/controller.dart';
+import 'package:pokemon_project/widgets/image.dart';
 
 class InfoView extends StatefulWidget {
   final Pokemon pokemon;
@@ -22,7 +23,7 @@ class _InfoViewState extends State<InfoView> {
       _pokemon = result.first;
       _error = '';
     } else {
-      _error = Constants.error;
+      _error = Label.error;
     }
     setState(() {
       _isLoading = false;
@@ -47,33 +48,21 @@ class _InfoViewState extends State<InfoView> {
               ? const CircularProgressIndicator()
               : _error != ''
                   ? Text(_error)
-                  : SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Expanded(
-                                child: Image.network(
-                                  _pokemon.sprite.front,
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                              Expanded(
-                                child: Image.network(
-                                  _pokemon.sprite.back,
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                            ],
-                          ),
-                          Text('NAME: ${_pokemon.name}'),
-                          Text('ID: ${_pokemon.id}'),
-                          Text('HEIGHT: ${_pokemon.height}'),
-                          Text('WEIGHT: ${_pokemon.weight}'),
-                          Text('TYPES: ${_pokemon.types}'),
-                        ],
-                      ),
+                  : Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SpriteWidget(url: _pokemon.sprite.front),
+                            SpriteWidget(url: _pokemon.sprite.back),
+                          ],
+                        ),
+                        Text('NAME: ${_pokemon.name}'),
+                        Text('ID: ${_pokemon.id}'),
+                        Text('HEIGHT: ${_pokemon.height}'),
+                        Text('WEIGHT: ${_pokemon.weight}'),
+                        Text('TYPES: ${_pokemon.types}'),
+                      ],
                     ),
         ),
       ),
