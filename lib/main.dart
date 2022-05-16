@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pokemon_project/views/home_view.dart';
+import 'package:pokemon_project/views/second_view.dart';
 
 void main() {
   runApp(const MyApp());
@@ -14,7 +15,11 @@ class MyApp extends StatelessWidget {
       title: 'Pokemon API Project',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
-      home: const HomeView(),
+      initialRoute: '/v1/',
+      routes: {
+        '/v1/': (context) => const HomeView(),
+        '/v2/': (context) => const SecondView(),
+      },
     );
   }
 }

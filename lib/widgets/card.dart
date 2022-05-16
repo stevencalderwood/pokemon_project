@@ -4,11 +4,12 @@ import 'package:pokemon_project/views/info_view.dart';
 
 class PokeCard extends StatelessWidget {
   final Pokemon pokemon;
-  const PokeCard({Key? key, required this.pokemon}) : super(key: key);
+  final PokemonInfo? pokemonInfo;
+  const PokeCard({Key? key, required this.pokemon, this.pokemonInfo}) : super(key: key);
 
   void _navigateToPokemonScreen(Pokemon poke, BuildContext context) {
     Navigator.push(context, MaterialPageRoute(builder: (_) {
-      return InfoView(pokemon: poke);
+      return InfoView(pokemon: poke, pokemonInfo: pokemonInfo);
     }));
   }
 
@@ -16,9 +17,11 @@ class PokeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        title: Text('${pokemon.id} ${pokemon.name}'),
-        onTap: () => _navigateToPokemonScreen(pokemon, context),
-        trailing: const Icon(Icons.star),
+        title: Text('${pokemon.id}. ${pokemon.name}'),
+        trailing: IconButton(
+          onPressed: () => _navigateToPokemonScreen(pokemon, context),
+          icon: const Icon(Icons.arrow_forward),
+        ),
       ),
     );
   }

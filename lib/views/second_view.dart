@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pokemon_project/constants/constants.dart';
 import 'package:pokemon_project/controllers/controller.dart';
+import 'package:pokemon_project/controllers/controller_json.dart';
 import 'package:pokemon_project/widgets/input.dart';
 
 class SecondView extends StatefulWidget {
@@ -12,7 +13,7 @@ class SecondView extends StatefulWidget {
 
 class _SecondViewState extends State<SecondView> {
   late final ScrollController _scrollController;
-  late final Service _controller;
+  late final ControllerJson _controller;
   final List<Widget> _pokemonToDisplay = [];
   List<Widget> _filteredPokemon = [];
 
@@ -46,7 +47,7 @@ class _SecondViewState extends State<SecondView> {
   void initState() {
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
-    _controller = Controller.home;
+    _controller = Controller.json;
     _getPokemon();
     super.initState();
   }

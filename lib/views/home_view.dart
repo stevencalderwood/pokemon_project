@@ -4,6 +4,7 @@ import 'package:pokemon_project/controllers/controller.dart';
 import 'package:pokemon_project/models/pokemon.dart';
 import 'package:pokemon_project/widgets/card.dart';
 import 'package:pokemon_project/widgets/input.dart';
+import 'package:pokemon_project/controllers/controller_api.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({Key? key}) : super(key: key);
@@ -14,7 +15,7 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   late final ScrollController _scrollController;
-  late final Service _controller;
+  late final ControllerApi _controller;
   final List<Widget> _pokemonWidgets = [];
   bool _isLoading = true;
   List<Widget> _searchResult = [];
@@ -39,7 +40,7 @@ class _HomeViewState extends State<HomeView> {
   }
 
   void _search(String search) async {
-    //TODO: mostruisità e passare pokemonInfo a Card widget se facciamo un api call
+    //TODO: mostruisità
     if (_isLoading) {
       return;
     }
@@ -51,14 +52,13 @@ class _HomeViewState extends State<HomeView> {
       _searchResult = [Column(children: memoryResult)];
     } else {
       final String url = '${Constant.pokemonAPI}$search';
-      final List result = await Service.getPokemonInfo(url: url);
-      if (result.isEmpty) {
+      final PokemonInfo? result = await Controller.getPokemonInfo(url: url);
+      if (result == null) {
         _searchResult = [const Center(child: Text('No pokemon found'))];
       } else {
-        final PokemonInfo fullPokemon = result.first as PokemonInfo;
-        final Pokemon pokemon = Pokemon(name: fullPokemon.name, url: '${Constant.pokemonAPI}${fullPokemon.id}');
+        final Pokemon pokemon = Pokemon(name: result.name, url: '${Constant.pokemonAPI}${result.id}');
         _searchResult = [
-          Column(children: [PokeCard(pokemon: pokemon)]),
+          Column(children: [PokeCard(pokemon: pokemon, pokemonInfo: result)]),
         ];
       }
     }
@@ -67,7 +67,7 @@ class _HomeViewState extends State<HomeView> {
     });
   }
 
-  void reset() {
+  void _reset() {
     setState(() => _searchResult = []);
   }
 
@@ -75,7 +75,7 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
-    _controller = Controller.home;
+    _controller = Controller.api;
     _getPokemon();
     super.initState();
   }
@@ -92,13 +92,36 @@ class _HomeViewState extends State<HomeView> {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         appBar: AppBar(
-          title: const Text(Label.titleHome),
+          title: PopupMenuButton<int>(
+            position: PopupMenuPosition.under,
+            onSelected: (value) {
+              Navigator.pushNamed(context, '/v2/');
+            },
+            itemBuilder: (context) {
+              return const [
+                PopupMenuItem<int>(
+                  value: 0,
+                  child: Text(Label.titleSecond),
+                ),
+              ];
+            },
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                Text(Label.titleHome),
+                Icon(Icons.arrow_drop_down),
+              ],
+            ),
+          ),
+          actions: [
+            IconButton(onPressed: () {}, icon: const Icon(Icons.info_outline)),
+          ],
         ),
         body: Column(
           children: [
             Padding(
               padding: const EdgeInsets.only(bottom: 10),
-              child: InputField(onSubmit: _search, onReset: reset),
+              child: InputField(onSubmit: _search, onReset: _reset),
             ),
             Expanded(
               child: _isLoading

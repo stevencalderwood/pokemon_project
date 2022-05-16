@@ -6,7 +6,8 @@ import 'package:pokemon_project/widgets/image.dart';
 
 class InfoView extends StatefulWidget {
   final Pokemon pokemon;
-  const InfoView({Key? key, required this.pokemon}) : super(key: key);
+  final PokemonInfo? pokemonInfo;
+  const InfoView({Key? key, required this.pokemon, this.pokemonInfo}) : super(key: key);
 
   @override
   State<InfoView> createState() => _InfoViewState();
@@ -14,16 +15,19 @@ class InfoView extends StatefulWidget {
 
 class _InfoViewState extends State<InfoView> {
   bool _isLoading = true;
-  late final String _error;
+  bool _error = false;
   late final PokemonInfo _pokemon;
 
   void _getPokemonInfo() async {
-    final List result = await Service.getPokemonInfo(url: widget.pokemon.url);
-    if (result.isNotEmpty) {
-      _pokemon = result.first;
-      _error = '';
+    if (widget.pokemonInfo == null) {
+      final PokemonInfo? result = await Controller.getPokemonInfo(url: widget.pokemon.url);
+      if (result != null) {
+        _pokemon = result;
+      } else {
+        _error = true;
+      }
     } else {
-      _error = Label.error;
+      _pokemon = widget.pokemonInfo!.copyWith();
     }
     setState(() {
       _isLoading = false;
@@ -46,8 +50,8 @@ class _InfoViewState extends State<InfoView> {
         body: Center(
           child: _isLoading
               ? const CircularProgressIndicator()
-              : _error != ''
-                  ? Text(_error)
+              : _error
+                  ? const Text(Label.error)
                   : Column(
                       children: [
                         Row(
