@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pokemon_project/constants/constants.dart';
-import 'package:pokemon_project/controllers/controller.dart';
 import 'package:pokemon_project/controllers/controller_json.dart';
-import 'package:pokemon_project/widgets/input.dart';
 
 class SecondView extends StatefulWidget {
   const SecondView({Key? key}) : super(key: key);
@@ -15,10 +13,12 @@ class _SecondViewState extends State<SecondView> {
   late final ScrollController _scrollController;
   late final ControllerJson _controller;
   final List<Widget> _pokemonToDisplay = [];
-  List<Widget> _filteredPokemon = [];
+  bool _isLoading = true;
+  List<Widget> _searchResult = [];
 
   Future<void> _getPokemon() async {
     List<Widget> result = await _controller.getPokemon();
+    _isLoading = false;
     if (result.isEmpty) {
       _scrollController.removeListener(_scrollListener);
       return;
@@ -36,18 +36,17 @@ class _SecondViewState extends State<SecondView> {
   }
 
   void _search(String search) {
-    final String url = 'https://pokeapi.co/api/v2/pokemon/$search';
-    print(url);
-    // TODO: ora che abbiamo l'url possiamo fare richiesta get e gestire errore "not found"
+    //TODO: devo paginare anche i risultati e non scaricarli tutti nel widget
+    setState(() {
+      _searchResult = _controller.search(search);
+    });
   }
-
-  void reset() {}
 
   @override
   void initState() {
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
-    _controller = Controller.json;
+    _controller = ControllerJson();
     _getPokemon();
     super.initState();
   }
@@ -68,25 +67,35 @@ class _SecondViewState extends State<SecondView> {
         ),
         body: Column(
           children: [
-            InputField(onSubmit: _search, onReset: reset),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: TextField(
+                decoration: const InputDecoration(
+                  hintText: Label.inputHint,
+                  prefixIcon: Icon(Icons.search),
+                ),
+                textInputAction: TextInputAction.search,
+                onChanged: _search,
+              ),
+            ),
             Expanded(
-              child: _filteredPokemon.isEmpty
-                  ? SingleChildScrollView(
-                      controller: _scrollController,
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Column(
-                        children: [..._pokemonToDisplay],
-                      ),
-                    )
-                  : SingleChildScrollView(
-                      padding: const EdgeInsets.only(top: 10),
-                      child: Column(
-                        children: [
-                          Text('${_filteredPokemon.length} results:'),
-                          ..._filteredPokemon,
-                        ],
-                      ),
-                    ),
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : _searchResult.isEmpty
+                      ? SingleChildScrollView(
+                          controller: _scrollController,
+                          child: Column(
+                            children: [..._pokemonToDisplay],
+                          ),
+                        )
+                      : SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              Text('${_searchResult.length} results:'),
+                              ..._searchResult,
+                            ],
+                          ),
+                        ),
             ),
           ],
         ),

@@ -75,7 +75,7 @@ class _HomeViewState extends State<HomeView> {
   void initState() {
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
-    _controller = Controller.api;
+    _controller = ControllerApi();
     _getPokemon();
     super.initState();
   }

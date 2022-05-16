@@ -1,11 +1,11 @@
-import 'package:pokemon_project/controllers/controller_api.dart';
 import 'package:pokemon_project/models/pokemon.dart';
 import 'package:pokemon_project/models/api.dart';
-import 'package:pokemon_project/controllers/controller_json.dart';
+import 'package:flutter/material.dart';
+import 'package:pokemon_project/widgets/card.dart';
 
 abstract class Controller {
-  static ControllerApi api = ControllerApi();
-  static ControllerJson json = ControllerJson();
+  final List<Pokemon> pokemonList = [];
+
   static Future<PokemonInfo?> getPokemonInfo({
     required String url,
     Future<Map<String, dynamic>> Function(String) apiCall = Api.getRequest,
@@ -13,5 +13,15 @@ abstract class Controller {
     Map<String, dynamic> result = await apiCall(url);
     if (result['error'] != null) return null;
     return PokemonInfo.fromJson(result);
+  }
+
+  List<Widget> toWidget(List<Pokemon> pokemon) {
+    return pokemon.map<Widget>((e) => PokeCard(pokemon: e)).toList();
+  }
+
+  List<Widget> search(String filter) {
+    String s = filter.toLowerCase();
+    List<Pokemon> list = pokemonList.where((e) => e.name.contains(s) || e.id == s).toList();
+    return toWidget(list);
   }
 }
