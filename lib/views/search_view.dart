@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pokemon_project/constants/constants.dart';
-import 'package:pokemon_project/controllers/controller.dart';
+import 'package:pokemon_project/controllers/provider.dart';
 import 'package:pokemon_project/controllers/controller_json.dart';
 import 'package:pokemon_project/controllers/controller_api.dart';
 import 'package:pokemon_project/widgets/input_widget.dart';
@@ -70,17 +70,19 @@ class _SearchViewSecondState extends State<SearchViewSecond> {
             textInputAction: TextInputAction.search,
             onChanged: _search,
           ),
-          ..._results.isNotEmpty ? [Text('${_results.length} of ${_controller.results} results:')] : [],
-          Expanded(
-            child: _results.isNotEmpty
-                ? SingleChildScrollView(
-                    controller: _scrollController,
-                    child: Column(
-                      children: _results,
+          ..._results.isNotEmpty
+              ? [Text(Label.resultsNumber(displayed: _results.length, total: _controller.results))]
+              : [],
+          ..._results.isNotEmpty
+              ? [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      controller: _scrollController,
+                      child: Column(children: _results),
                     ),
                   )
-                : const Center(),
-          ),
+                ]
+              : []
         ],
       ),
     );
@@ -95,7 +97,7 @@ class SearchViewFirst extends StatefulWidget {
 }
 
 class _SearchViewFirstState extends State<SearchViewFirst> {
-  final ControllerApi _controller = Provider.api;
+  final ControllerApi _controller = Provider.fullApi;
   late final ScrollController _scrollController;
   List<Widget> _results = [];
   bool _isLoading = false;
@@ -162,8 +164,8 @@ class _SearchViewFirstState extends State<SearchViewFirst> {
           InputWidget(onSubmit: _search, onReset: _reset),
           ..._controller.results > 0
               ? [
-                  Text('${_results.length} of ${_controller.results} results:'),
-                  const Text('Maybe you were looking for...'),
+                  Text(Label.resultsNumber(displayed: _results.length, total: _controller.results)),
+                  const Text(Label.maybeLookingFor),
                 ]
               : [],
           Expanded(
@@ -177,7 +179,7 @@ class _SearchViewFirstState extends State<SearchViewFirst> {
                         ),
                       )
                     : _controller.noResults
-                        ? const Center(child: Text('No pokemon found'))
+                        ? const Center(child: Text(Label.pokemonNotFound))
                         : const Center(),
           ),
         ],

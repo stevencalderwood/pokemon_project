@@ -1,27 +1,23 @@
-import 'package:pokemon_project/controllers/controller_api.dart';
-import 'package:pokemon_project/controllers/controller_json.dart';
 import 'package:pokemon_project/models/pokemon.dart';
-import 'package:pokemon_project/models/api.dart';
+import 'package:pokemon_project/controllers/api.dart';
 import 'package:flutter/material.dart';
+import 'package:pokemon_project/models/service_result.dart';
 import 'package:pokemon_project/widgets/card_widget.dart';
-
-abstract class Provider {
-  static ControllerApi api = ControllerApi();
-  static ControllerJson json = ControllerJson();
-}
 
 abstract class Controller {
   final List<Pokemon> pokemonList = [];
   List<Pokemon> _searchResults = [];
   int _start = 0;
 
+  Future<List<Widget>> getPokemon();
+
   static Future<PokemonInfo?> getPokemonInfo({
     required String url,
-    Future<Map<String, dynamic>> Function(String) apiCall = Api.getRequest,
+    Future<ServiceResult> Function(String) apiCall = Api.getRequest,
   }) async {
-    Map<String, dynamic> result = await apiCall(url);
-    if (result['error'] != null) return null;
-    return PokemonInfo.fromJson(result);
+    final ServiceResult result = await apiCall(url);
+    if (result.error != null) return null;
+    return PokemonInfo.fromJson(result.data as Map<String, dynamic>);
   }
 
   List<Widget> toWidget(List<Pokemon> pokemon) {

@@ -1,21 +1,23 @@
 import 'package:pokemon_project/models/pokemon.dart';
 import 'package:pokemon_project/constants/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:pokemon_project/models/api.dart';
+import 'package:pokemon_project/controllers/api.dart';
 import 'package:pokemon_project/controllers/controller.dart';
+import 'package:pokemon_project/models/service_result.dart';
 import 'package:pokemon_project/widgets/card_widget.dart';
 
 class ControllerApi extends Controller {
   bool noResults = false;
   String _requestUrl = Constant.pokemonAPI;
 
-  Future<List<Widget>> getPokemon({Future<Map<String, dynamic>> Function(String) apiCall = Api.getRequest}) async {
+  @override
+  Future<List<Widget>> getPokemon({Future<ServiceResult> Function(String) apiCall = Api.getRequest}) async {
     if (_requestUrl == '') return [];
-    Map<String, dynamic> result = await apiCall(_requestUrl);
-    if (result['error'] != null) return [];
-    _requestUrl = result['next'] ?? '';
+    final ServiceResult result = await apiCall(_requestUrl);
+    if (result.error != null) return [];
+    _requestUrl = result.data['next'] ?? '';
     final List<Pokemon> newPokemon = [];
-    for (Map<String, dynamic> pokemon in result['results']) {
+    for (Map<String, dynamic> pokemon in result.data['results']) {
       newPokemon.add(Pokemon.fromJson(pokemon));
     }
     pokemonList.addAll(newPokemon);

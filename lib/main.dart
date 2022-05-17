@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pokemon_project/constants/constants.dart';
 import 'package:pokemon_project/views/home_view.dart';
 import 'package:pokemon_project/views/search_view.dart';
 import 'package:pokemon_project/views/second_view.dart';
@@ -13,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Pokemon API Project',
+      title: Label.appName,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(primarySwatch: Colors.blue),
       initialRoute: '/v1/',

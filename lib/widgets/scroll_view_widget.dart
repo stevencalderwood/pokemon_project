@@ -14,6 +14,7 @@ class ScrollViewWidget extends StatefulWidget {
 
 class _ScrollViewWidgetState extends State<ScrollViewWidget> {
   late final ScrollController _scrollController;
+  //TODO: I don't like defining the controller type as dynamic
   late final dynamic _controller;
   final List<Widget> _pokemonWidgets = [];
   bool _isLoading = true;
@@ -51,13 +52,6 @@ class _ScrollViewWidgetState extends State<ScrollViewWidget> {
     _scrollController.dispose();
     super.dispose();
   }
-
-  // @override
-  // void setState(VoidCallback fn) {
-  //   if (mounted) {
-  //     super.setState(fn);
-  //   }
-  // }
 
   @override
   Widget build(BuildContext context) {

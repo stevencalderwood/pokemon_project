@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pokemon_project/controllers/controller.dart';
+import 'package:pokemon_project/controllers/provider.dart';
 import 'package:pokemon_project/widgets/main_widget.dart';
 
 class SecondView extends StatelessWidget {

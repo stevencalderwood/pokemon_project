@@ -2,8 +2,11 @@
 
 A new Flutter project.
 
-## Getting Started
+## File checked:
+1. Constants 
+2. Validator
+3. Api
+4. Provider NEXT
 
-Using a static property of an abstract class I don't need to pass the controller to the search page, 
-I only need to pass the enum.
-Than I make a service for displaying the widgets depending on the controller type.
+## Improvements:
+1. Route names are hard coded;

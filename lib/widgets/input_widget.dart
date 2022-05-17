@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pokemon_project/constants/constants.dart';
-import 'package:pokemon_project/controllers/pokemon_finder.dart';
+import 'package:pokemon_project/controllers/validator.dart';
 import 'package:pokemon_project/models/service_result.dart';
 
 class InputWidget extends StatefulWidget {
@@ -50,7 +50,7 @@ class _InputWidgetState extends State<InputWidget> {
       controller: _controller,
       onSubmitted: (text) {
         if (text.isEmpty) return;
-        final ServiceResult result = pokemonValidator(value: text);
+        final ServiceResult result = Validator.validatePokemon(input: text);
         setState(() => _errorText = result.error);
         if (_errorText != null) return;
         widget.onSubmit(result.data.toString());
