@@ -39,4 +39,10 @@ class ControllerJson extends Controller {
     final end = _start + 20;
     return end > _maxLength ? _maxLength : end;
   }
+
+  @override
+  void reset() {
+    _start = 0;
+    super.reset();
+  }
 }

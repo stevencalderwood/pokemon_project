@@ -1,7 +1,7 @@
 import 'package:pokemon_project/models/pokemon.dart';
 import 'package:pokemon_project/constants/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:pokemon_project/controllers/api.dart';
+import 'package:pokemon_project/services/api.dart';
 import 'package:pokemon_project/controllers/controller.dart';
 import 'package:pokemon_project/models/service_result.dart';
 import 'package:pokemon_project/widgets/card_widget.dart';
@@ -30,7 +30,7 @@ class ControllerApi extends Controller {
   ///
   /// NOTE: This could lead to multiple results depending on the user activity.
   Future<List<Widget>> searchPokemon(String search) async {
-    noResults = false;
+    reset();
     final String url = '${Constant.pokemonAPI}$search';
     final PokemonInfo? result = await Controller.getPokemonInfo(url: url);
     if (result != null) {
@@ -43,5 +43,11 @@ class ControllerApi extends Controller {
       return [];
     }
     return memoryResult;
+  }
+
+  @override
+  void reset() {
+    noResults = false;
+    super.reset();
   }
 }

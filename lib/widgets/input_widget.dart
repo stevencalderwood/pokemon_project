@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pokemon_project/constants/constants.dart';
-import 'package:pokemon_project/controllers/validator.dart';
+import 'package:pokemon_project/services/validator.dart';
 import 'package:pokemon_project/models/service_result.dart';
 
 class InputWidget extends StatefulWidget {

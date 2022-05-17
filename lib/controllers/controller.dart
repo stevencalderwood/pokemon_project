@@ -1,5 +1,5 @@
 import 'package:pokemon_project/models/pokemon.dart';
-import 'package:pokemon_project/controllers/api.dart';
+import 'package:pokemon_project/services/api.dart';
 import 'package:flutter/material.dart';
 import 'package:pokemon_project/models/service_result.dart';
 import 'package:pokemon_project/widgets/card_widget.dart';

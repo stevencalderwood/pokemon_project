@@ -50,6 +50,7 @@ class _ScrollViewWidgetState extends State<ScrollViewWidget> {
   @override
   void dispose() {
     _scrollController.dispose();
+    _controller.reset();
     super.dispose();
   }
 

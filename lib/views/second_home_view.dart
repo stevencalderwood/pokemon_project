@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:pokemon_project/controllers/provider.dart';
-import 'package:pokemon_project/widgets/main_widget.dart';
+import 'package:pokemon_project/widgets/home_widget.dart';
+import 'package:pokemon_project/models/version.dart';
 
-class SecondView extends StatelessWidget {
-  const SecondView({Key? key}) : super(key: key);
+class SecondHomeView extends StatelessWidget {
+  const SecondHomeView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return MainWidget(
+    return HomeWidget(
       action: (value) => Navigator.pop(context),
       version: ProjectVersion.second,
       controllerJson: Provider.json,

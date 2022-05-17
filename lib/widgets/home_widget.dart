@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:pokemon_project/controllers/controller_json.dart';
+import 'package:pokemon_project/widgets/dialog_widget.dart';
 import 'package:pokemon_project/widgets/scroll_view_widget.dart';
 import 'package:pokemon_project/controllers/controller_api.dart';
 import 'package:pokemon_project/constants/constants.dart';
+import 'package:pokemon_project/models/version.dart';
 
-enum ProjectVersion { first, second }
-
-class MainWidget extends StatelessWidget {
+class HomeWidget extends StatelessWidget {
   final void Function(int) action;
   final ControllerApi? controllerApi;
   final ControllerJson? controllerJson;
   final ProjectVersion version;
-  const MainWidget({Key? key, this.controllerApi, this.controllerJson, required this.action, required this.version})
+  const HomeWidget({Key? key, this.controllerApi, this.controllerJson, required this.action, required this.version})
       : super(key: key);
 
   @override
@@ -27,14 +27,14 @@ class MainWidget extends StatelessWidget {
               return [
                 PopupMenuItem<int>(
                   value: 0,
-                  child: Text(version == ProjectVersion.first ? Label.titleSecond : Label.titleHome),
+                  child: Text(version == ProjectVersion.first ? Label.titleSecond : Label.titleFirst),
                 ),
               ];
             },
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(version == ProjectVersion.first ? Label.titleHome : Label.titleSecond),
+                Text(version == ProjectVersion.first ? Label.titleFirst : Label.titleSecond),
                 const Icon(Icons.arrow_drop_down),
               ],
             ),
@@ -49,7 +49,12 @@ class MainWidget extends StatelessWidget {
                   }
                 },
                 icon: const Icon(Icons.search)),
-            IconButton(onPressed: () {}, icon: const Icon(Icons.info_outline)),
+            IconButton(
+                onPressed: () => infoDialog(
+                      context: context,
+                      version: version,
+                    ),
+                icon: const Icon(Icons.info_outline)),
           ],
         ),
         body: Column(

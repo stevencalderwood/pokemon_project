@@ -1,0 +1,1 @@
+enum ProjectVersion { first, second }
