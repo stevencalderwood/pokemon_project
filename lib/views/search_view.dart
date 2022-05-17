@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:pokemon_project/constants/constants.dart';
 import 'package:pokemon_project/controllers/controller.dart';
 import 'package:pokemon_project/controllers/controller_json.dart';
-import '../controllers/controller_api.dart';
-import '../models/pokemon.dart';
-import '../widgets/card_widget.dart';
-import '../widgets/input_widget.dart';
-import '../widgets/loading_widget.dart';
+import 'package:pokemon_project/controllers/controller_api.dart';
+import 'package:pokemon_project/widgets/input_widget.dart';
+import 'package:pokemon_project/widgets/loading_widget.dart';
 
 class SearchViewSecond extends StatefulWidget {
   const SearchViewSecond({Key? key}) : super(key: key);
@@ -18,15 +16,17 @@ class SearchViewSecond extends StatefulWidget {
 class _SearchViewSecondState extends State<SearchViewSecond> {
   final ControllerJson _controller = Provider.json;
   late final ScrollController _scrollController;
-  late final TextEditingController _txtController;
   List<Widget> _results = [];
 
   void _search(String value) {
-    if (value == 'SCROLL') {
-      _results.addAll(_controller.searchPokemon(value));
-    } else {
-      _results = _controller.searchPokemon(value);
-    }
+    _results = _controller.searchPokemon(value);
+    setState(() {
+      _results;
+    });
+  }
+
+  void _scroll() {
+    _results.addAll(_controller.searchPokemon('SCROLL'));
     setState(() {
       _results;
     });
@@ -35,7 +35,7 @@ class _SearchViewSecondState extends State<SearchViewSecond> {
   void _scrollListener() {
     if (_scrollController.offset >= _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
-      _search('SCROLL');
+      _scroll();
     }
   }
 
@@ -43,7 +43,6 @@ class _SearchViewSecondState extends State<SearchViewSecond> {
   void initState() {
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
-    _txtController = TextEditingController();
     super.initState();
   }
 
@@ -51,7 +50,6 @@ class _SearchViewSecondState extends State<SearchViewSecond> {
   void dispose() {
     _controller.reset();
     _scrollController.dispose();
-    _txtController.dispose();
     super.dispose();
   }
 
@@ -69,7 +67,6 @@ class _SearchViewSecondState extends State<SearchViewSecond> {
               hintText: Label.inputHint,
               prefixIcon: Icon(Icons.search),
             ),
-            controller: _txtController,
             textInputAction: TextInputAction.search,
             onChanged: _search,
           ),
@@ -109,21 +106,32 @@ class _SearchViewFirstState extends State<SearchViewFirst> {
       _isLoading = true;
     });
     _results = await _controller.searchPokemon(search);
-    // TODO: need to also handle scrolling, careful with adding and removing listener
+    _scrollController.removeListener(_scrollListener);
+    if (_controller.results > 20) {
+      _scrollController.addListener(_scrollListener);
+    }
     setState(() {
       _isLoading = false;
+    });
+  }
+
+  void _scroll() {
+    _results.addAll(_controller.searchFromMemory('SCROLL'));
+    setState(() {
+      _results;
     });
   }
 
   void _scrollListener() {
     if (_scrollController.offset >= _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
-      print('sto scrollando');
+      _scroll();
     }
   }
 
   void _reset() {
     _controller.noResults = false;
+    _controller.reset();
     setState(() {
       _results = [];
     });

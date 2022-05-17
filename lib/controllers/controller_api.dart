@@ -3,7 +3,7 @@ import 'package:pokemon_project/constants/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:pokemon_project/models/api.dart';
 import 'package:pokemon_project/controllers/controller.dart';
-import '../widgets/card_widget.dart';
+import 'package:pokemon_project/widgets/card_widget.dart';
 
 class ControllerApi extends Controller {
   bool noResults = false;
