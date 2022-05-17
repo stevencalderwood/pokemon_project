@@ -1,5 +1,7 @@
 abstract class Constant {
   static const String pokemonAPI = 'https://pokeapi.co/api/v2/pokemon/';
+  static const int pokemonMin = 1;
+  static const int pokemonMax = 898;
 
   /// length: >= 3
   ///

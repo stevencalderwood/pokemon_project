@@ -8,7 +8,6 @@ class ControllerApi extends Controller {
   String _requestUrl = Constant.pokemonAPI;
 
   Future<List<Widget>> getPokemon({Future<Map<String, dynamic>> Function(String) apiCall = Api.getRequest}) async {
-    print(pokemonList.length);
     if (_requestUrl == '') return [];
     Map<String, dynamic> result = await apiCall(_requestUrl);
     if (result['error'] != null) return [];

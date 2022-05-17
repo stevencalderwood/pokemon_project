@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pokemon_project/constants/constants.dart';
-import 'package:pokemon_project/widgets/input_widget.dart';
+import 'package:pokemon_project/controllers/controller.dart';
+import 'package:pokemon_project/controllers/controller_json.dart';
 
 class SearchView extends StatefulWidget {
   const SearchView({Key? key}) : super(key: key);
@@ -10,32 +11,75 @@ class SearchView extends StatefulWidget {
 }
 
 class _SearchViewState extends State<SearchView> {
+  final ControllerJson _controller = Provider.json;
+  late final ScrollController _scrollController;
+  late final TextEditingController _txtController;
+  List<Widget> _results = [];
+
   void _search(String value) {
-    print(value);
+    if (value == 'SCROLL') {
+      _results.addAll(_controller.searchPokemon(value));
+    } else {
+      _results = _controller.searchPokemon(value);
+    }
+    setState(() {
+      _results;
+    });
   }
 
-  void _reset() {
-    print('reset');
+  void _scrollListener() {
+    if (_scrollController.offset >= _scrollController.position.maxScrollExtent &&
+        !_scrollController.position.outOfRange) {
+      _search('SCROLL');
+    }
+  }
+
+  @override
+  void initState() {
+    _scrollController = ScrollController();
+    _scrollController.addListener(_scrollListener);
+    _txtController = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.reset();
+    _scrollController.dispose();
+    _txtController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Text('Search Pokemon'),
       ),
       body: Column(
         children: [
-          //TODO: one widget only for inputs??
           TextField(
             decoration: const InputDecoration(
               hintText: Label.inputHint,
               prefixIcon: Icon(Icons.search),
             ),
+            controller: _txtController,
             textInputAction: TextInputAction.search,
             onChanged: _search,
           ),
-          InputWidget(onSubmit: _search, onReset: _reset),
+          // InputWidget(onSubmit: _search, onReset: _reset),
+          Text('${_results.length} of ${_controller.results} results:'),
+          Expanded(
+            child: _results.isNotEmpty
+                ? SingleChildScrollView(
+                    controller: _scrollController,
+                    child: Column(
+                      children: _results,
+                    ),
+                  )
+                : const Center(),
+          ),
         ],
       ),
     );
@@ -73,19 +117,3 @@ class _SearchViewState extends State<SearchView> {
 // void _reset() {
 //   setState(() => _searchResult = []);
 // }
-
-// void _search(String search) {
-//   //TODO: devo paginare anche i risultati e non scaricarli tutti nel widget
-//   setState(() {
-//     _searchResult = _controller.search(search);
-//   });
-// }
-
-// Widget result = SingleChildScrollView(
-//   child: Column(
-//     children: [
-//       Text('${_searchResult.length} results:'),
-//       ..._searchResult,
-//     ],
-//   ),
-// );

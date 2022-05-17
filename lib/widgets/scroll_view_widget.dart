@@ -49,16 +49,15 @@ class _ScrollViewWidgetState extends State<ScrollViewWidget> {
   @override
   void dispose() {
     _scrollController.dispose();
-    _getPokemon();
     super.dispose();
   }
 
-  @override
-  void setState(VoidCallback fn) {
-    if (mounted) {
-      super.setState(fn);
-    }
-  }
+  // @override
+  // void setState(VoidCallback fn) {
+  //   if (mounted) {
+  //     super.setState(fn);
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

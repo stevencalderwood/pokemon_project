@@ -4,7 +4,7 @@ import 'package:pokemon_project/models/service_result.dart';
 ServiceResult _parseId(String value) {
   try {
     final int id = int.parse(value);
-    if ((id >= 1 && id <= 898) || (id >= 10001 && id <= 10228)) {
+    if (id >= Constant.pokemonMin && id <= Constant.pokemonMax) {
       return ServiceResult<int>(data: id);
     }
     return const ServiceResult(error: Label.invalidID);

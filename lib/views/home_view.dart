@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pokemon_project/controllers/controller_api.dart';
+import 'package:pokemon_project/controllers/controller.dart';
 import 'package:pokemon_project/widgets/main_widget.dart';
 
 class FirstView extends StatelessWidget {
@@ -10,7 +10,7 @@ class FirstView extends StatelessWidget {
     return MainWidget(
       action: (value) => Navigator.pushNamed(context, '/v2/'),
       version: ProjectVersion.first,
-      controllerApi: ControllerApi(),
+      controllerApi: Provider.api,
     );
   }
 }
