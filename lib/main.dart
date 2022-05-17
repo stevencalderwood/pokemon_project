@@ -20,7 +20,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/v1/': (context) => const FirstView(),
         '/v2/': (context) => const SecondView(),
-        '/v2/search/': (context) => const SearchView(),
+        '/v1/search/': (context) => const SearchViewFirst(),
+        '/v2/search/': (context) => const SearchViewSecond(),
       },
     );
   }

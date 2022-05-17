@@ -30,6 +30,10 @@ class ControllerJson extends Controller {
     return super.toWidget(newPokemon);
   }
 
+  List<Widget> searchPokemon(String filter) {
+    return super.searchFromMemory(filter);
+  }
+
   int get _end {
     final end = _start + 20;
     return end > _maxLength ? _maxLength : end;

@@ -17,5 +17,6 @@ abstract class Label {
   static const String invalidName = 'Invalid name';
   static const String titleHome = 'Pokemon Project 1';
   static const String titleSecond = 'Pokemon Project 2';
+  static const String titleSearch = 'Search Pokemon';
   static const String inputHint = 'Insert pokemon name or id';
 }

@@ -2,15 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:pokemon_project/constants/constants.dart';
 import 'package:pokemon_project/controllers/controller.dart';
 import 'package:pokemon_project/controllers/controller_json.dart';
+import '../controllers/controller_api.dart';
+import '../models/pokemon.dart';
+import '../widgets/card_widget.dart';
+import '../widgets/input_widget.dart';
+import '../widgets/loading_widget.dart';
 
-class SearchView extends StatefulWidget {
-  const SearchView({Key? key}) : super(key: key);
+class SearchViewSecond extends StatefulWidget {
+  const SearchViewSecond({Key? key}) : super(key: key);
 
   @override
-  State<SearchView> createState() => _SearchViewState();
+  State<SearchViewSecond> createState() => _SearchViewSecondState();
 }
 
-class _SearchViewState extends State<SearchView> {
+class _SearchViewSecondState extends State<SearchViewSecond> {
   final ControllerJson _controller = Provider.json;
   late final ScrollController _scrollController;
   late final TextEditingController _txtController;
@@ -55,7 +60,7 @@ class _SearchViewState extends State<SearchView> {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
-        title: const Text('Search Pokemon'),
+        title: const Text(Label.titleSearch),
       ),
       body: Column(
         children: [
@@ -68,8 +73,7 @@ class _SearchViewState extends State<SearchView> {
             textInputAction: TextInputAction.search,
             onChanged: _search,
           ),
-          // InputWidget(onSubmit: _search, onReset: _reset),
-          Text('${_results.length} of ${_controller.results} results:'),
+          ..._results.isNotEmpty ? [Text('${_results.length} of ${_controller.results} results:')] : [],
           Expanded(
             child: _results.isNotEmpty
                 ? SingleChildScrollView(
@@ -86,34 +90,90 @@ class _SearchViewState extends State<SearchView> {
   }
 }
 
-// void _search(String search) async {
-//   //TODO: mostruisità
-//   if (_isLoading) {
-//     return;
-//   }
-//   setState(() {
-//     _isLoading = true;
-//   });
-//   final List<Widget> memoryResult = _controller.search(search);
-//   if (memoryResult.isNotEmpty) {
-//     _searchResult = [Column(children: memoryResult)];
-//   } else {
-//     final String url = '${Constant.pokemonAPI}$search';
-//     final PokemonInfo? result = await Controller.getPokemonInfo(url: url);
-//     if (result == null) {
-//       _searchResult = [const Center(child: Text('No pokemon found'))];
-//     } else {
-//       final Pokemon pokemon = Pokemon(name: result.name, url: '${Constant.pokemonAPI}${result.id}');
-//       _searchResult = [
-//         Column(children: [CardWidget(pokemon: pokemon, pokemonInfo: result)]),
-//       ];
-//     }
-//   }
-//   setState(() {
-//     _isLoading = false;
-//   });
-// }
-//
-// void _reset() {
-//   setState(() => _searchResult = []);
-// }
+class SearchViewFirst extends StatefulWidget {
+  const SearchViewFirst({Key? key}) : super(key: key);
+
+  @override
+  State<SearchViewFirst> createState() => _SearchViewFirstState();
+}
+
+class _SearchViewFirstState extends State<SearchViewFirst> {
+  final ControllerApi _controller = Provider.api;
+  late final ScrollController _scrollController;
+  List<Widget> _results = [];
+  bool _isLoading = false;
+
+  void _search(String search) async {
+    if (_isLoading) return;
+    setState(() {
+      _isLoading = true;
+    });
+    _results = await _controller.searchPokemon(search);
+    // TODO: need to also handle scrolling, careful with adding and removing listener
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  void _scrollListener() {
+    if (_scrollController.offset >= _scrollController.position.maxScrollExtent &&
+        !_scrollController.position.outOfRange) {
+      print('sto scrollando');
+    }
+  }
+
+  void _reset() {
+    _controller.noResults = false;
+    setState(() {
+      _results = [];
+    });
+  }
+
+  @override
+  void initState() {
+    _scrollController = ScrollController();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.reset();
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      resizeToAvoidBottomInset: false,
+      appBar: AppBar(
+        title: const Text(Label.titleSearch),
+      ),
+      body: Column(
+        children: [
+          InputWidget(onSubmit: _search, onReset: _reset),
+          ..._controller.results > 0
+              ? [
+                  Text('${_results.length} of ${_controller.results} results:'),
+                  const Text('Maybe you were looking for...'),
+                ]
+              : [],
+          Expanded(
+            child: _isLoading
+                ? const LoadingWidget()
+                : _results.isNotEmpty
+                    ? SingleChildScrollView(
+                        controller: _scrollController,
+                        child: Column(
+                          children: _results,
+                        ),
+                      )
+                    : _controller.noResults
+                        ? const Center(child: Text('No pokemon found'))
+                        : const Center(),
+          ),
+        ],
+      ),
+    );
+  }
+}

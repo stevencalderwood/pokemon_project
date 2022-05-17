@@ -42,7 +42,9 @@ class MainWidget extends StatelessWidget {
           actions: [
             IconButton(
                 onPressed: () {
-                  if (version == ProjectVersion.second) {
+                  if (version == ProjectVersion.first) {
+                    Navigator.of(context).pushNamed('/v1/search/');
+                  } else {
                     Navigator.of(context).pushNamed('/v2/search/');
                   }
                 },

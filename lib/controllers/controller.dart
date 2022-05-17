@@ -33,7 +33,7 @@ abstract class Controller {
     return pokemonList.where((e) => e.name.contains(s) || e.id == s).toList();
   }
 
-  List<Widget> searchPokemon(String filter) {
+  List<Widget> searchFromMemory(String filter) {
     if (filter == '') {
       reset();
       return [];
@@ -42,7 +42,9 @@ abstract class Controller {
       _searchResults = _search(filter);
       _start = 0;
     }
-    if (_searchResults.length > 20 && _start == _maxLength) return [];
+    if (_searchResults.length > 20 && _start == _maxLength) {
+      return [];
+    }
     final List<Pokemon> newPokemon = [];
     for (Pokemon pokemon in _searchResults.getRange(_start, _end).toList()) {
       _start++;
