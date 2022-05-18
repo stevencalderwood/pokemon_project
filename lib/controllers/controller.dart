@@ -6,7 +6,7 @@ import 'package:pokemon_project/widgets/card_widget.dart';
 
 abstract class Controller {
   final List<Pokemon> pokemonList = [];
-  List<Pokemon> _searchResults = [];
+  final List<Pokemon> _searchResults = [];
   int _start = 0;
 
   Future<List<Widget>> getPokemon();
@@ -26,7 +26,7 @@ abstract class Controller {
 
   List<Pokemon> _search(String value) {
     String s = value.toLowerCase();
-    return pokemonList.where((e) => e.name.contains(s) || e.id == s).toList();
+    return pokemonList.where((e) => e.name.contains(s) || (e.id).toString() == s).toList();
   }
 
   List<Widget> searchFromMemory(String filter) {
@@ -35,8 +35,8 @@ abstract class Controller {
       return [];
     }
     if (filter != 'SCROLL') {
-      _searchResults = _search(filter);
-      _start = 0;
+      reset();
+      _searchResults.addAll(_search(filter));
     }
     if (_searchResults.length > 20 && _start == _maxLength) {
       return [];
@@ -59,7 +59,7 @@ abstract class Controller {
   int get _maxLength => results;
 
   void reset() {
-    _searchResults = [];
+    _searchResults.clear();
     _start = 0;
   }
 }

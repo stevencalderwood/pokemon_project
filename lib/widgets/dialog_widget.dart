@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:pokemon_project/constants/constants.dart';
-import 'package:pokemon_project/models/version.dart';
 
-void infoDialog({required BuildContext context, required ProjectVersion version}) {
+void infoDialog({required BuildContext context, required bool isFirstVersion}) {
   showDialog(
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: Text(version == ProjectVersion.first ? Label.titleFirst : Label.titleSecond),
-        content: Text(version == ProjectVersion.first ? Label.designFirst : Label.designSecond),
+        title: Text(isFirstVersion ? Label.titleFirst : Label.titleSecond),
+        content: Text(isFirstVersion ? Label.designFirst : Label.designSecond),
         actions: <Widget>[
           TextButton(
             onPressed: () {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pokemon_project/controllers/controller_api.dart';
 import 'package:pokemon_project/controllers/controller_json.dart';
 import 'package:pokemon_project/widgets/loading_widget.dart';
+import 'package:pokemon_project/widgets/sort_button_widget.dart';
 
 class ScrollViewWidget extends StatefulWidget {
   final ControllerApi? controllerApi;
@@ -20,7 +21,7 @@ class _ScrollViewWidgetState extends State<ScrollViewWidget> {
   bool _isLoading = true;
 
   Future<void> _getPokemon() async {
-    List<Widget> result = await _controller.getPokemon();
+    final List<Widget> result = await _controller.getPokemon();
     _isLoading = false;
     if (result.isEmpty) {
       _scrollController.removeListener(_scrollListener);
@@ -36,6 +37,14 @@ class _ScrollViewWidgetState extends State<ScrollViewWidget> {
         !_scrollController.position.outOfRange) {
       await _getPokemon();
     }
+  }
+
+  void _sort() {
+    setState(() => _isLoading = true);
+    _controller.sortPokemon();
+    _scrollController.jumpTo(0);
+    _pokemonWidgets.clear();
+    _getPokemon();
   }
 
   @override
@@ -56,16 +65,21 @@ class _ScrollViewWidgetState extends State<ScrollViewWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: _isLoading
-          ? const LoadingWidget()
-          : SingleChildScrollView(
-              controller: _scrollController,
-              child: Padding(
-                padding: const EdgeInsets.only(top: 5),
-                child: Column(children: _pokemonWidgets),
-              ),
-            ),
+    return Column(
+      children: [
+        ...widget.controllerJson != null ? [SortButtonWidget(sort: _sort, isAlphabetic: _controller.isAlphabetic)] : [],
+        Expanded(
+          child: _isLoading
+              ? const LoadingWidget()
+              : SingleChildScrollView(
+                  controller: _scrollController,
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 5),
+                    child: Column(children: _pokemonWidgets),
+                  ),
+                ),
+        ),
+      ],
     );
   }
 }

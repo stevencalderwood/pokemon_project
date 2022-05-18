@@ -12,7 +12,7 @@ class Pokemon {
     );
   }
 
-  String get id => url.split('/')[6];
+  int get id => int.parse(url.split('/')[6]);
 
   Pokemon copyWith({String? name, String? url}) {
     return Pokemon(
