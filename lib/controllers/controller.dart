@@ -3,6 +3,7 @@ import 'package:pokemon_project/services/api.dart';
 import 'package:flutter/material.dart';
 import 'package:pokemon_project/models/service_result.dart';
 import 'package:pokemon_project/widgets/card_widget.dart';
+import 'package:pokemon_project/models/pokemon_info.dart';
 
 abstract class Controller {
   final List<Pokemon> pokemonList = [];

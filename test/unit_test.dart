@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pokemon_project/models/pokemon_info.dart';
 import 'package:pokemon_project/services/api.dart';
 import 'package:pokemon_project/controllers/controller.dart';
 import 'package:pokemon_project/services/validator.dart';
-import 'package:pokemon_project/models/pokemon.dart';
 import 'package:pokemon_project/models/service_result.dart';
 
 void main() {

@@ -3,6 +3,8 @@ import 'package:pokemon_project/constants/constants.dart';
 import 'package:pokemon_project/models/pokemon.dart';
 import 'package:pokemon_project/controllers/controller.dart';
 import 'package:pokemon_project/widgets/sprite_widget.dart';
+import 'package:pokemon_project/models/pokemon_info.dart';
+import 'package:pokemon_project/widgets/stats_widget.dart';
 
 class InfoView extends StatefulWidget {
   final Pokemon pokemon;
@@ -45,14 +47,19 @@ class _InfoViewState extends State<InfoView> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: Text(widget.pokemon.name),
+          title: _isLoading
+              ? const Text('...')
+              : Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [Text(_pokemon.name), Text(_pokemon.id)],
+                ),
         ),
         body: Center(
           child: _isLoading
               ? const CircularProgressIndicator()
               : _error
                   ? const Text(Label.error)
-                  : Column(
+                  : ListView(
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -61,11 +68,10 @@ class _InfoViewState extends State<InfoView> {
                             SpriteWidget(url: _pokemon.sprite.back),
                           ],
                         ),
-                        Text('NAME: ${_pokemon.name}'),
-                        Text('ID: ${_pokemon.id}'),
-                        Text('HEIGHT: ${_pokemon.height}'),
-                        Text('WEIGHT: ${_pokemon.weight}'),
-                        Text('TYPES: ${_pokemon.types}'),
+                        StatsWidget(title: 'Type', value: _pokemon.type),
+                        StatsWidget(title: 'Abilities', value: _pokemon.abilities),
+                        StatsWidget(title: 'Height', value: _pokemon.height),
+                        StatsWidget(title: 'Weight', value: _pokemon.weight),
                       ],
                     ),
         ),

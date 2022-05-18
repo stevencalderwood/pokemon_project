@@ -19,10 +19,10 @@ Like the other pages the results, if necessary, will also be displayed following
 20 at a time.
 
 ## File checked:
-1. Constants 
-2. Validator
-3. Api
-4. Provider NEXT
+1. Constants ALL
+2. Services ALL
+3. Models ALL
+4. Controllers ??
 
 ## Improvements:
 1. Route names are hard coded;

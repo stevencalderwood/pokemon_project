@@ -5,6 +5,7 @@ import 'package:pokemon_project/services/api.dart';
 import 'package:pokemon_project/controllers/controller.dart';
 import 'package:pokemon_project/models/service_result.dart';
 import 'package:pokemon_project/widgets/card_widget.dart';
+import 'package:pokemon_project/models/pokemon_info.dart';
 
 class ControllerApi extends Controller {
   bool noResults = false;
@@ -34,8 +35,7 @@ class ControllerApi extends Controller {
     final String url = '${Constant.pokemonAPI}$search';
     final PokemonInfo? result = await Controller.getPokemonInfo(url: url);
     if (result != null) {
-      final Pokemon pokemon = Pokemon(name: result.name, url: '${Constant.pokemonAPI}${result.id}');
-      return [CardWidget(pokemon: pokemon, pokemonInfo: result)];
+      return [CardWidget(pokemon: result.subCopy(), pokemonInfo: result)];
     }
     final List<Widget> memoryResult = super.searchFromMemory(search);
     if (memoryResult.isEmpty) {

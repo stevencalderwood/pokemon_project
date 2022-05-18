@@ -11,7 +11,7 @@ class SecondSearchView extends StatefulWidget {
 }
 
 class _SecondSearchViewState extends State<SecondSearchView> {
-  final ControllerJson _controller = Provider.json;
+  final ControllerJson _controller = Provider.controllerJson;
   late final ScrollController _scrollController;
   List<Widget> _results = [];
 

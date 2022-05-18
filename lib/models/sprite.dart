@@ -19,5 +19,5 @@ class Sprite {
   }
 
   @override
-  String toString() => '{front: $front, back: $back}';
+  String toString() => 'Sprite(front: $front, back: $back)';
 }

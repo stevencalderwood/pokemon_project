@@ -7,6 +7,6 @@ class FirstHomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return HomeWidget(controllerApi: Provider.fullApi);
+    return HomeWidget(controllerApi: Provider.controllerApi);
   }
 }

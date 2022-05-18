@@ -7,6 +7,6 @@ class SecondHomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return HomeWidget(controllerJson: Provider.json);
+    return HomeWidget(controllerJson: Provider.controllerJson);
   }
 }

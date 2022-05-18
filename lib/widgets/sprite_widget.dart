@@ -9,7 +9,7 @@ class SpriteWidget extends StatelessWidget {
     return Image.network(
       url,
       height: MediaQuery.of(context).size.width * 0.5,
-      fit: BoxFit.cover,
+      fit: BoxFit.contain,
       loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
         if (loadingProgress == null) {
           return child;

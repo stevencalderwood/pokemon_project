@@ -13,7 +13,7 @@ class FirstSearchView extends StatefulWidget {
 }
 
 class _FirstSearchViewState extends State<FirstSearchView> {
-  final ControllerApi _controller = Provider.fullApi;
+  final ControllerApi _controller = Provider.controllerApi;
   late final ScrollController _scrollController;
   List<Widget> _results = [];
   bool _isLoading = false;
