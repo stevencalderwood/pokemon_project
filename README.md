@@ -1,5 +1,9 @@
 # pokemon_project
 
+## Next Steps:
+1. Review the results number widget, now is unwatchable
+2. Review the function for the input widget
+3. Consider making a strict distinction between home and search functionality for the controllers.
 
 ## Version 1:
 This version takes all the data from **pokeapi.co**, at every full scroll the App will call the API 

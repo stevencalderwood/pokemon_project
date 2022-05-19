@@ -4,7 +4,6 @@ import 'package:pokemon_project/controllers/controller_api.dart';
 import 'package:pokemon_project/controllers/controller_json.dart';
 import 'package:pokemon_project/widgets/input_widget.dart';
 import 'package:pokemon_project/widgets/loading_widget.dart';
-import 'package:pokemon_project/widgets/scaffold_widget.dart';
 
 class SearchView extends StatefulWidget {
   final ControllerApi? controllerApi;
