@@ -1,6 +1,5 @@
 # pokemon_project
 
-A new Flutter project.
 
 ## Version 1:
 This version takes all the data from **pokeapi.co**, at every full scroll the App will call the API 

@@ -4,8 +4,8 @@ import 'package:pokemon_project/controllers/controller_api.dart';
 import 'package:pokemon_project/controllers/controller_json.dart';
 import 'package:pokemon_project/widgets/input_widget.dart';
 import 'package:pokemon_project/widgets/loading_widget.dart';
+import 'package:pokemon_project/widgets/scaffold_widget.dart';
 
-// TODO: sarebbe bello poter usare lo scroll widget della home page!
 class SearchView extends StatefulWidget {
   final ControllerApi? controllerApi;
   final ControllerJson? controllerJson;
@@ -124,7 +124,13 @@ class _SearchViewState extends State<SearchView> {
                 ? const LoadingWidget()
                 : _textController.text.isNotEmpty && _results.isEmpty
                     ? const Center(child: Text(Label.pokemonNotFound))
-                    : SingleChildScrollView(controller: _scrollController, child: Column(children: _results)),
+                    : SingleChildScrollView(
+                        controller: _scrollController,
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 5),
+                          child: Column(children: _results),
+                        ),
+                      ),
           ),
         ],
       ),

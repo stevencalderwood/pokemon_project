@@ -1,58 +1,92 @@
 import 'package:flutter/material.dart';
-import 'package:pokemon_project/controllers/controller_json.dart';
-import 'package:pokemon_project/widgets/dialog_widget.dart';
-import 'package:pokemon_project/widgets/scroll_view_widget.dart';
 import 'package:pokemon_project/controllers/controller_api.dart';
-import 'package:pokemon_project/constants/constants.dart';
+import 'package:pokemon_project/controllers/controller_json.dart';
+import 'package:pokemon_project/widgets/scaffold_widget.dart';
+import 'package:pokemon_project/widgets/loading_widget.dart';
+import 'package:pokemon_project/widgets/sort_button_widget.dart';
 
-class HomeView extends StatelessWidget {
+class HomeView extends StatefulWidget {
   final ControllerApi? controllerApi;
   final ControllerJson? controllerJson;
-  const HomeView({Key? key, this.controllerApi, this.controllerJson}) : super(key: key);
+  const HomeView({Key? key, this.controllerJson, this.controllerApi}) : super(key: key);
+
+  @override
+  State<HomeView> createState() => _HomeViewState();
+}
+
+class _HomeViewState extends State<HomeView> {
+  late final ScrollController _scrollController;
+  final List<Widget> _pokemonWidgets = [];
+  bool _isLoading = true;
+
+  Future<void> _getPokemon() async {
+    late final List<Widget> result;
+    if (widget.controllerApi != null) {
+      result = await widget.controllerApi!.getPokemon();
+    } else {
+      result = await widget.controllerJson!.getPokemon();
+    }
+    if (result.isEmpty) {
+      _scrollController.removeListener(_scrollListener);
+      return;
+    }
+    _pokemonWidgets.addAll(result);
+    setState(() {
+      _isLoading = false;
+    });
+  }
+
+  void _scrollListener() async {
+    if (_scrollController.offset >= _scrollController.position.maxScrollExtent &&
+        !_scrollController.position.outOfRange) {
+      await _getPokemon();
+    }
+  }
+
+  void _sort() {
+    setState(() => _isLoading = true);
+    widget.controllerJson!.sortPokemon();
+    _scrollController.jumpTo(0);
+    _pokemonWidgets.clear();
+    _getPokemon();
+  }
+
+  @override
+  void initState() {
+    _scrollController = ScrollController();
+    _scrollController.addListener(_scrollListener);
+    _getPokemon();
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    widget.controllerApi?.reset();
+    widget.controllerJson?.reset();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          title: controllerApi != null
-              ? PopupMenuButton<String>(
-                  position: PopupMenuPosition.under,
-                  onSelected: (value) => Navigator.pushNamed(context, value),
-                  itemBuilder: (context) {
-                    return [
-                      const PopupMenuItem<String>(
-                        value: '/v2/',
-                        child: Text(Label.titleSecond),
-                      ),
-                    ];
-                  },
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: const [
-                      Text(Label.titleFirst),
-                      Icon(Icons.arrow_drop_down),
-                    ],
+    return ScaffoldWidget(
+      isFirstVersion: widget.controllerApi != null,
+      body: Column(
+        children: [
+          if (widget.controllerJson != null)
+            SortButtonWidget(sort: _sort, isAlphabetic: widget.controllerJson!.isAlphabetic),
+          Expanded(
+            child: _isLoading
+                ? const LoadingWidget()
+                : SingleChildScrollView(
+                    controller: _scrollController,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 5),
+                      child: Column(children: _pokemonWidgets),
+                    ),
                   ),
-                )
-              : const Text(Label.titleSecond),
-          actions: [
-            IconButton(
-                onPressed: () {
-                  if (controllerApi != null) {
-                    Navigator.of(context).pushNamed('/v1/search/');
-                  } else {
-                    Navigator.of(context).pushNamed('/v2/search/');
-                  }
-                },
-                icon: const Icon(Icons.search)),
-            IconButton(
-                onPressed: () => infoDialog(context: context, isFirstVersion: controllerApi != null),
-                icon: const Icon(Icons.info_outline)),
-          ],
-        ),
-        body: ScrollViewWidget(controllerApi: controllerApi, controllerJson: controllerJson),
+          ),
+        ],
       ),
     );
   }
