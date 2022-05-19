@@ -5,10 +5,10 @@ import 'package:pokemon_project/widgets/scroll_view_widget.dart';
 import 'package:pokemon_project/controllers/controller_api.dart';
 import 'package:pokemon_project/constants/constants.dart';
 
-class HomeWidget extends StatelessWidget {
+class HomeView extends StatelessWidget {
   final ControllerApi? controllerApi;
   final ControllerJson? controllerJson;
-  const HomeWidget({Key? key, this.controllerApi, this.controllerJson}) : super(key: key);
+  const HomeView({Key? key, this.controllerApi, this.controllerJson}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

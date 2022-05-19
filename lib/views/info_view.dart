@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:pokemon_project/constants/constants.dart';
 import 'package:pokemon_project/models/pokemon.dart';
-import 'package:pokemon_project/controllers/controller.dart';
 import 'package:pokemon_project/widgets/sprite_widget.dart';
 import 'package:pokemon_project/models/pokemon_info.dart';
 import 'package:pokemon_project/widgets/stats_widget.dart';
+import 'package:pokemon_project/services/api.dart';
 
 class InfoView extends StatefulWidget {
   final Pokemon pokemon;
@@ -22,7 +22,7 @@ class _InfoViewState extends State<InfoView> {
 
   void _getPokemonInfo() async {
     if (widget.pokemonInfo == null) {
-      final PokemonInfo? result = await Controller.getPokemonInfo(url: widget.pokemon.url);
+      final PokemonInfo? result = await Api.getPokemonInfo(url: widget.pokemon.url);
       if (result != null) {
         _pokemon = result;
       } else {
@@ -47,12 +47,13 @@ class _InfoViewState extends State<InfoView> {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
-          title: _isLoading
-              ? const Text('...')
-              : Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [Text(_pokemon.name), Text(_pokemon.id)],
-                ),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(widget.pokemon.fullName),
+              Text(widget.pokemon.hash),
+            ],
+          ),
         ),
         body: Center(
           child: _isLoading
@@ -64,8 +65,8 @@ class _InfoViewState extends State<InfoView> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            SpriteWidget(url: _pokemon.sprite.front),
-                            SpriteWidget(url: _pokemon.sprite.back),
+                            if (_pokemon.sprite.front != null) SpriteWidget(url: _pokemon.sprite.front!),
+                            if (_pokemon.sprite.back != null) SpriteWidget(url: _pokemon.sprite.back!),
                           ],
                         ),
                         StatsWidget(title: 'Type', value: _pokemon.type),

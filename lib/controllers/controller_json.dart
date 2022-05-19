@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:pokemon_project/constants/constants.dart';
-import 'package:pokemon_project/controllers/controller.dart';
+import 'package:pokemon_project/controllers/interface.dart';
 import 'package:pokemon_project/models/pokemon.dart';
 
-class ControllerJson extends Controller {
+class ControllerJson extends Interface {
   final int _maxLength = Constant.pokemonMax;
   bool _isAlphabetic = false;
   int _start = 0;
@@ -42,8 +42,9 @@ class ControllerJson extends Controller {
     reset();
   }
 
-  List<Widget> searchPokemon(String filter) {
-    return super.searchFromMemory(filter);
+  @override
+  Future<List<Widget>> searchPokemon(String input) {
+    return Future<List<Widget>>.value(super.searchInMemory(input));
   }
 
   int get _end {

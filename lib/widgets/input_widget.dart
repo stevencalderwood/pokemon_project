@@ -4,9 +4,12 @@ import 'package:pokemon_project/services/validator.dart';
 import 'package:pokemon_project/models/service_result.dart';
 
 class InputWidget extends StatefulWidget {
-  final void Function(String) onSubmit;
+  final TextEditingController textController;
+  final void Function(String)? onSubmit;
+  final void Function(String)? onChange;
   final void Function() onReset;
-  const InputWidget({Key? key, required this.onSubmit, required this.onReset}) : super(key: key);
+  const InputWidget({Key? key, required this.onReset, required this.textController, this.onSubmit, this.onChange})
+      : super(key: key);
 
   @override
   State<InputWidget> createState() => _InputWidgetState();
@@ -14,18 +17,18 @@ class InputWidget extends StatefulWidget {
 
 class _InputWidgetState extends State<InputWidget> {
   String? _errorText;
-  late final TextEditingController _controller;
 
-  @override
-  void initState() {
-    _controller = TextEditingController();
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
+  void Function(String)? _onSubmitted() {
+    if (widget.onSubmit != null) {
+      return (text) {
+        if (text.isEmpty) return;
+        final ServiceResult result = Validator.validatePokemon(input: text);
+        _errorText = result.error;
+        if (_errorText != null) return;
+        widget.onSubmit!(result.data.toString());
+      };
+    }
+    return null;
   }
 
   @override
@@ -35,11 +38,11 @@ class _InputWidgetState extends State<InputWidget> {
         hintText: Label.inputHint,
         errorText: _errorText,
         prefixIcon: const Icon(Icons.search),
-        suffixIcon: _controller.text.isNotEmpty
+        suffixIcon: widget.textController.text.isNotEmpty
             ? IconButton(
                 onPressed: () {
                   _errorText = null;
-                  setState(() => _controller.clear());
+                  widget.textController.clear();
                   widget.onReset();
                 },
                 icon: const Icon(Icons.clear),
@@ -47,14 +50,9 @@ class _InputWidgetState extends State<InputWidget> {
             : null,
       ),
       textInputAction: TextInputAction.search,
-      controller: _controller,
-      onSubmitted: (text) {
-        if (text.isEmpty) return;
-        final ServiceResult result = Validator.validatePokemon(input: text);
-        setState(() => _errorText = result.error);
-        if (_errorText != null) return;
-        widget.onSubmit(result.data.toString());
-      },
+      controller: widget.textController,
+      onChanged: widget.onChange,
+      onSubmitted: _onSubmitted(),
     );
   }
 }

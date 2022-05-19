@@ -1,13 +1,14 @@
 class Sprite {
-  final String front;
-  final String back;
+  final String? front;
+  final String? back;
 
   const Sprite({required this.front, required this.back});
 
+  //TODO: some pokemon may not have a front or back sprite and having a null value
   factory Sprite.fromJson(Map<String, dynamic> json) {
     return Sprite(
-      front: json['front_default'] as String,
-      back: json['back_default'] as String,
+      front: json['front_default'],
+      back: json['back_default'],
     );
   }
 

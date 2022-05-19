@@ -1,9 +1,13 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:pokemon_project/constants/constants.dart';
+import 'package:pokemon_project/controllers/controller_api.dart';
+import 'package:pokemon_project/controllers/provider.dart';
 import 'package:pokemon_project/models/pokemon_info.dart';
 import 'package:pokemon_project/services/api.dart';
-import 'package:pokemon_project/controllers/controller.dart';
 import 'package:pokemon_project/services/validator.dart';
 import 'package:pokemon_project/models/service_result.dart';
+import 'package:flutter/material.dart';
+import 'dart:developer';
 
 void main() {
   final List<String> values = ['0', '1', 'aa', 'abc', 'a/cdg', '01ff', '--ff', '-f-', 'abu-abu'];
@@ -31,16 +35,24 @@ void main() {
       expect(result.data != null, true);
     });
     test('test single pokemon api call', () async {
-      final PokemonInfo? result = await Controller.getPokemonInfo(url: 'https://pokeapi.co/api/v2/pokemon/bulbasaur');
+      final PokemonInfo? result = await Api.getPokemonInfo(url: 'https://pokeapi.co/api/v2/pokemon/bulbasaur');
       expect(result != null, true);
       expect(result!.height, 7);
     });
-    // test('test api call first 20 pokemon', () async {
-    //   final ControllerApi controller = Provider.fullApi;
-    //   final List<Widget> results = await controller.getPokemon();
-    //   expect(results.length, 20);
-    //   expect(controller.url, 'https://pokeapi.co/api/v2/pokemon/?offset=20&limit=20');
-    //  // SUCCESS
-    // });
+    test('test api call first 20 pokemon', () async {
+      final ControllerApi controller = Provider.controllerApi;
+      final List<Widget> results = await controller.getPokemon();
+      expect(results.length, 20);
+      // expect(controller.url, 'https://pokeapi.co/api/v2/pokemon/?offset=20&limit=20');
+    });
+    test('check pokemon values returned from the API', () async {
+      for (int i = 1; i <= Constant.pokemonMax; i++) {
+        log(i.toString());
+        final PokemonInfo? info = await Api.getPokemonInfo(url: '${Constant.pokemonAPI}$i');
+        expect(info != null, true);
+        log('waiting for next...');
+        await Future.delayed(const Duration(seconds: 2));
+      }
+    });
   });
 }

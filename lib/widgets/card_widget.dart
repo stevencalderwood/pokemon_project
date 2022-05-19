@@ -18,7 +18,7 @@ class CardWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        title: Text(pokemon.fullName),
+        title: Text(pokemon.hashAndName),
         trailing: IconButton(
           onPressed: () => _navigateToPokemonScreen(pokemon, context),
           icon: const Icon(Icons.arrow_forward),

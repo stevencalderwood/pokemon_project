@@ -18,7 +18,9 @@ class Pokemon {
   }
 
   int get id => int.parse(url.split('/')[6]);
-  String get fullName => '#$id ${name[0].toUpperCase()}${name.substring(1)}';
+  String get fullName => '${name[0].toUpperCase()}${name.substring(1)}';
+  String get hash => '#$id';
+  String get hashAndName => '$hash $fullName';
 
   @override
   toString() => 'Pokemon(name: $name, url: $url)';

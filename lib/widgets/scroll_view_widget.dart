@@ -15,20 +15,25 @@ class ScrollViewWidget extends StatefulWidget {
 
 class _ScrollViewWidgetState extends State<ScrollViewWidget> {
   late final ScrollController _scrollController;
-  //TODO: I don't like defining the controller type as dynamic
-  late final dynamic _controller;
   final List<Widget> _pokemonWidgets = [];
   bool _isLoading = true;
 
   Future<void> _getPokemon() async {
-    final List<Widget> result = await _controller.getPokemon();
-    _isLoading = false;
+    late final List<Widget> result;
+    if (widget.controllerApi != null) {
+      result = await widget.controllerApi!.getPokemon();
+    } else {
+      result = await widget.controllerJson!.getPokemon();
+    }
+
     if (result.isEmpty) {
       _scrollController.removeListener(_scrollListener);
       return;
     }
+    _pokemonWidgets.addAll(result);
+
     setState(() {
-      _pokemonWidgets.addAll(result);
+      _isLoading = false;
     });
   }
 
@@ -41,7 +46,7 @@ class _ScrollViewWidgetState extends State<ScrollViewWidget> {
 
   void _sort() {
     setState(() => _isLoading = true);
-    _controller.sortPokemon();
+    widget.controllerJson!.sortPokemon();
     _scrollController.jumpTo(0);
     _pokemonWidgets.clear();
     _getPokemon();
@@ -51,7 +56,6 @@ class _ScrollViewWidgetState extends State<ScrollViewWidget> {
   void initState() {
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
-    _controller = widget.controllerJson ?? widget.controllerApi;
     _getPokemon();
     super.initState();
   }
@@ -59,7 +63,8 @@ class _ScrollViewWidgetState extends State<ScrollViewWidget> {
   @override
   void dispose() {
     _scrollController.dispose();
-    _controller.reset();
+    widget.controllerApi?.reset();
+    widget.controllerJson?.reset();
     super.dispose();
   }
 
@@ -67,16 +72,14 @@ class _ScrollViewWidgetState extends State<ScrollViewWidget> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        ...widget.controllerJson != null ? [SortButtonWidget(sort: _sort, isAlphabetic: _controller.isAlphabetic)] : [],
+        if (widget.controllerJson != null)
+          SortButtonWidget(sort: _sort, isAlphabetic: widget.controllerJson!.isAlphabetic),
         Expanded(
           child: _isLoading
               ? const LoadingWidget()
               : SingleChildScrollView(
                   controller: _scrollController,
-                  child: Padding(
-                    padding: const EdgeInsets.only(top: 5),
-                    child: Column(children: _pokemonWidgets),
-                  ),
+                  child: Padding(padding: const EdgeInsets.only(top: 5), child: Column(children: _pokemonWidgets)),
                 ),
         ),
       ],

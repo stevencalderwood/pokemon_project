@@ -22,7 +22,7 @@ Like the other pages the results, if necessary, will also be displayed following
 1. Constants ALL
 2. Services ALL
 3. Models ALL
-4. Controllers ??
+4. Controllers (Provider)
 
 ## Improvements:
 1. Route names are hard coded;

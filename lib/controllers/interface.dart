@@ -1,25 +1,14 @@
 import 'package:pokemon_project/models/pokemon.dart';
-import 'package:pokemon_project/services/api.dart';
 import 'package:flutter/material.dart';
-import 'package:pokemon_project/models/service_result.dart';
 import 'package:pokemon_project/widgets/card_widget.dart';
-import 'package:pokemon_project/models/pokemon_info.dart';
 
-abstract class Controller {
+abstract class Interface {
   final List<Pokemon> pokemonList = [];
   final List<Pokemon> _searchResults = [];
   int _start = 0;
 
   Future<List<Widget>> getPokemon();
-
-  static Future<PokemonInfo?> getPokemonInfo({
-    required String url,
-    Future<ServiceResult> Function(String) apiCall = Api.getRequest,
-  }) async {
-    final ServiceResult result = await apiCall(url);
-    if (result.error != null) return null;
-    return PokemonInfo.fromJson(result.data as Map<String, dynamic>);
-  }
+  Future<List<Widget>> searchPokemon(String input);
 
   List<Widget> toWidget(List<Pokemon> pokemon) {
     return pokemon.map<Widget>((e) => CardWidget(pokemon: e)).toList();
@@ -30,18 +19,14 @@ abstract class Controller {
     return pokemonList.where((e) => e.name.contains(s) || (e.id).toString() == s).toList();
   }
 
-  List<Widget> searchFromMemory(String filter) {
-    if (filter == '') {
-      reset();
+  List<Widget> scrollSearchResults() {
+    if (_searchResults.length > 20 && _start == searchResults) {
       return [];
     }
-    if (filter != 'SCROLL') {
-      reset();
-      _searchResults.addAll(_search(filter));
-    }
-    if (_searchResults.length > 20 && _start == _maxLength) {
-      return [];
-    }
+    return _iterateSearchResults();
+  }
+
+  List<Widget> _iterateSearchResults() {
     final List<Pokemon> newPokemon = [];
     for (Pokemon pokemon in _searchResults.getRange(_start, _end).toList()) {
       _start++;
@@ -50,15 +35,20 @@ abstract class Controller {
     return toWidget(newPokemon);
   }
 
-  int get results => _searchResults.length;
-
-  int get _end {
-    final end = _start + 20;
-    return end > _maxLength ? _maxLength : end;
+  List<Widget> searchInMemory(String filter) {
+    reset();
+    if (filter == '') return [];
+    _searchResults.addAll(_search(filter));
+    return _iterateSearchResults();
   }
 
-  int get _maxLength => results;
+  int get searchResults => _searchResults.length;
+  int get _end {
+    final end = _start + 20;
+    return end > searchResults ? searchResults : end;
+  }
 
+  /// Resets search results
   void reset() {
     _searchResults.clear();
     _start = 0;
