@@ -1,15 +1,19 @@
+// ignore_for_file: avoid_print, unused_local_variable
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:pokemon_project/constants/constants.dart';
 import 'package:pokemon_project/controllers/controller_api.dart';
+import 'package:pokemon_project/controllers/controller_json.dart';
 import 'package:pokemon_project/controllers/provider.dart';
+import 'package:pokemon_project/models/pokemon.dart';
 import 'package:pokemon_project/models/pokemon_info.dart';
 import 'package:pokemon_project/services/api.dart';
 import 'package:pokemon_project/services/validator.dart';
 import 'package:pokemon_project/models/service_result.dart';
 import 'package:flutter/material.dart';
-import 'dart:developer';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   final List<String> values = ['0', '1', 'aa', 'abc', 'a/cdg', '01ff', '--ff', '-f-', 'abu-abu'];
   final List<bool> error = [true, false, false, false, true, true, true, true, false];
   final List<Type> dataTypes = [Null, int, String, String, Null, Null, Null, Null, String];
@@ -19,6 +23,18 @@ void main() {
         final ServiceResult result = Validator.validatePokemon(input: values[i]);
         expect(result.error != null, error[i]);
       }
+    });
+    test('check regex against all pokemon names', () async {
+      ControllerJson controller = ControllerJson();
+      await controller.getPokemon();
+      final List<Pokemon> allPokemon = controller.pokemonList;
+      for (Pokemon pokemon in allPokemon) {
+        print(pokemon.name);
+        final ServiceResult result = Validator.validatePokemon(input: pokemon.name);
+        expect(result.error, null);
+      }
+      // final ServiceResult result = Validator.validatePokemon(input: "2porygon2");
+      // expect(result.error, null);
     });
     test('serviceResult data', () {
       for (int i = 0; i < values.length; i++) {
@@ -47,12 +63,25 @@ void main() {
     });
     test('check pokemon values returned from the API', () async {
       for (int i = 1; i <= Constant.pokemonMax; i++) {
-        log(i.toString());
+        print(i);
         final PokemonInfo? info = await Api.getPokemonInfo(url: '${Constant.pokemonAPI}$i');
         expect(info != null, true);
-        log('waiting for next...');
+        print('waiting for next...');
         await Future.delayed(const Duration(seconds: 2));
       }
+    });
+    test('catching a failed null check', () async {
+      late final PokemonInfo pokemon;
+      bool error = false;
+      PokemonInfo? pokemonInfo;
+      String url = 'fake url';
+      try {
+        pokemon = (pokemonInfo?.copyWith() ?? await Api.getPokemonInfo(url: url))!;
+      } catch (e) {
+        print(e);
+        error = true;
+      }
+      expect(error, true);
     });
   });
 }

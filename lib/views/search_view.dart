@@ -4,6 +4,7 @@ import 'package:pokemon_project/controllers/controller_api.dart';
 import 'package:pokemon_project/controllers/controller_json.dart';
 import 'package:pokemon_project/widgets/input_widget.dart';
 import 'package:pokemon_project/widgets/loading_widget.dart';
+import 'package:pokemon_project/widgets/results_widget.dart';
 
 class SearchView extends StatefulWidget {
   final ControllerApi? controllerApi;
@@ -17,7 +18,7 @@ class SearchView extends StatefulWidget {
 class _SearchViewState extends State<SearchView> {
   late final ScrollController _scrollController;
   late final TextEditingController _textController;
-  List<Widget> _results = [];
+  List<Widget> _resultWidgets = [];
   bool _isLoading = false;
 
   void _manageScrollController(int results) {
@@ -30,42 +31,44 @@ class _SearchViewState extends State<SearchView> {
     }
   }
 
+  /// Returns a function for the [InputWidget] if the controller is capable to handle a dynamic search.
+  ///
+  /// It will be called everytime the input changes.
   void Function(String)? _onChange() {
     if (widget.controllerJson != null) {
       return (String input) async {
-        _results = await widget.controllerJson!.searchPokemon(input);
+        _resultWidgets = await widget.controllerJson!.searchPokemon(input);
         _manageScrollController(widget.controllerJson!.searchResults);
-        setState(() {
-          _results;
-        });
+        setState(() => _resultWidgets);
       };
     }
     return null;
   }
 
+  /// Returns a function for the [InputWidget] if the controller is not capable to handle a dynamic search.
+  ///
+  /// It'll be called only when the input is submitted by the user.
   void Function(String)? _onSubmit() {
     if (widget.controllerApi != null) {
       return (String input) async {
         if (_isLoading) return;
-        setState(() {
-          _isLoading = true;
-        });
-        _results = await widget.controllerApi!.searchPokemon(input);
+        setState(() => _isLoading = true);
+        _resultWidgets = await widget.controllerApi!.searchPokemon(input);
         _manageScrollController(widget.controllerApi!.searchResults);
-        setState(() {
-          _isLoading = false;
-        });
+        setState(() => _isLoading = false);
       };
     }
     return null;
   }
 
+  /// Called when the text input is reset by the user
+  ///
+  /// The Controller search history will also be cleaned.
   void _reset() {
+    if (_isLoading) return;
     widget.controllerApi?.reset();
     widget.controllerJson?.reset();
-    setState(() {
-      _results.clear();
-    });
+    setState(() => _resultWidgets.clear());
   }
 
   void _scrollListener() {
@@ -76,13 +79,18 @@ class _SearchViewState extends State<SearchView> {
   }
 
   void _scroll() {
-    // TODO: brutta
-    _results.addAll(widget.controllerApi != null
-        ? widget.controllerApi!.scrollSearchResults()
-        : widget.controllerJson!.scrollSearchResults());
-    setState(() {
-      _results;
-    });
+    _resultWidgets.addAll(widget.controllerApi?.scrollSearchResults() ?? widget.controllerJson!.scrollSearchResults());
+    setState(() => _resultWidgets);
+  }
+
+  /// Widget displayed when the search result from the [widget.controllerApi] comes from the super class memory.
+  List<Widget> _partial() {
+    if (_resultWidgets.isNotEmpty && widget.controllerApi != null && widget.controllerApi!.isPartialResult) {
+      return [
+        Row(children: const [Padding(padding: EdgeInsets.all(10), child: Text(Label.maybeLookingFor))])
+      ];
+    }
+    return [];
   }
 
   @override
@@ -94,6 +102,7 @@ class _SearchViewState extends State<SearchView> {
 
   @override
   void dispose() {
+    //  Resets the controllers search history.
     widget.controllerApi?.reset();
     widget.controllerJson?.reset();
     _scrollController.dispose();
@@ -105,31 +114,30 @@ class _SearchViewState extends State<SearchView> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(title: const Text(Label.titleSearch)),
+      appBar: AppBar(title: Text(Label.titleSearch(widget.controllerApi != null))),
       body: Column(
         children: [
           InputWidget(onReset: _reset, onSubmit: _onSubmit(), onChange: _onChange(), textController: _textController),
-          if (_results.isNotEmpty) ...[
-            Text(Label.resultsNumber(
-              displayed: _results.length,
-              total: widget.controllerApi != null
-                  ? widget.controllerApi!.searchResults
-                  : widget.controllerJson!.searchResults,
-            )),
-            if (widget.controllerApi != null && widget.controllerApi!.partialResult) const Text(Label.maybeLookingFor),
-          ],
           Expanded(
             child: _isLoading
                 ? const LoadingWidget()
-                : _textController.text.isNotEmpty && _results.isEmpty
-                    ? const Center(child: Text(Label.pokemonNotFound))
-                    : SingleChildScrollView(
-                        controller: _scrollController,
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 5),
-                          child: Column(children: _results),
-                        ),
+                : Column(
+                    children: [
+                      ResultsWidget(total: widget.controllerApi?.searchResults ?? widget.controllerJson!.searchResults),
+                      ..._partial(),
+                      Expanded(
+                        child: _textController.text.isNotEmpty && _resultWidgets.isEmpty
+                            ? const Center(child: Text(Label.pokemonNotFound))
+                            : SingleChildScrollView(
+                                controller: _scrollController,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(top: 5),
+                                  child: Column(children: _resultWidgets),
+                                ),
+                              ),
                       ),
+                    ],
+                  ),
           ),
         ],
       ),

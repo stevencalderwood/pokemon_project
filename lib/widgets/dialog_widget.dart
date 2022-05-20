@@ -6,14 +6,14 @@ void infoDialog({required BuildContext context, required bool isFirstVersion}) {
     context: context,
     builder: (context) {
       return AlertDialog(
-        title: Text(isFirstVersion ? Label.titleFirst : Label.titleSecond),
+        title: Text(Label.titleHome(isFirstVersion)),
         content: Text(isFirstVersion ? Label.designFirst : Label.designSecond),
         actions: <Widget>[
           TextButton(
             onPressed: () {
               Navigator.of(context).pop();
             },
-            child: const Text("Have fun!"),
+            child: const Text(Label.haveFun),
           ),
         ],
       );

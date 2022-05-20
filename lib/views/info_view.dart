@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pokemon_project/constants/constants.dart';
 import 'package:pokemon_project/models/pokemon.dart';
+import 'package:pokemon_project/widgets/loading_widget.dart';
 import 'package:pokemon_project/widgets/sprite_widget.dart';
 import 'package:pokemon_project/models/pokemon_info.dart';
 import 'package:pokemon_project/widgets/stats_widget.dart';
@@ -21,19 +22,14 @@ class _InfoViewState extends State<InfoView> {
   late final PokemonInfo _pokemon;
 
   void _getPokemonInfo() async {
-    if (widget.pokemonInfo == null) {
-      final PokemonInfo? result = await Api.getPokemonInfo(url: widget.pokemon.url);
-      if (result != null) {
-        _pokemon = result;
-      } else {
-        _error = true;
-      }
-    } else {
-      _pokemon = widget.pokemonInfo!.copyWith();
+    setState(() => _isLoading = false);
+    try {
+      _pokemon = (widget.pokemonInfo?.copyWith() ?? await Api.getPokemonInfo(url: widget.pokemon.url))!;
+    } catch (e) {
+      // catching the null check operator used on a null value if the API also fails
+      _error = true;
     }
-    setState(() {
-      _isLoading = false;
-    });
+    setState(() => _isLoading = false);
   }
 
   @override
@@ -55,27 +51,19 @@ class _InfoViewState extends State<InfoView> {
             ],
           ),
         ),
-        body: Center(
-          child: _isLoading
-              ? const CircularProgressIndicator()
-              : _error
-                  ? const Text(Label.error)
-                  : ListView(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            if (_pokemon.sprite.front != null) SpriteWidget(url: _pokemon.sprite.front!),
-                            if (_pokemon.sprite.back != null) SpriteWidget(url: _pokemon.sprite.back!),
-                          ],
-                        ),
-                        StatsWidget(title: 'Type', value: _pokemon.type),
-                        StatsWidget(title: 'Abilities', value: _pokemon.abilities),
-                        StatsWidget(title: 'Height', value: _pokemon.height),
-                        StatsWidget(title: 'Weight', value: _pokemon.weight),
-                      ],
-                    ),
-        ),
+        body: _isLoading
+            ? const LoadingWidget()
+            : _error
+                ? const Text(Label.error)
+                : ListView(
+                    children: [
+                      SpriteWidget(sprite: _pokemon.sprite),
+                      StatsWidget(title: 'Type', value: _pokemon.type),
+                      StatsWidget(title: 'Abilities', value: _pokemon.abilities),
+                      StatsWidget(title: 'Height', value: _pokemon.height),
+                      StatsWidget(title: 'Weight', value: _pokemon.weight),
+                    ],
+                  ),
       ),
     );
   }

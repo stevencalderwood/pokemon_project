@@ -23,12 +23,18 @@ class _InputWidgetState extends State<InputWidget> {
       return (text) {
         if (text.isEmpty) return;
         final ServiceResult result = Validator.validatePokemon(input: text);
-        _errorText = result.error;
+        setState(() => _errorText = result.error);
         if (_errorText != null) return;
         widget.onSubmit!(result.data.toString());
       };
     }
     return null;
+  }
+
+  void Function(String) _onChanged() {
+    return (String input) {
+      setState(() => widget.textController.text);
+    };
   }
 
   @override
@@ -51,7 +57,7 @@ class _InputWidgetState extends State<InputWidget> {
       ),
       textInputAction: TextInputAction.search,
       controller: widget.textController,
-      onChanged: widget.onChange,
+      onChanged: widget.onChange ?? _onChanged(),
       onSubmitted: _onSubmitted(),
     );
   }

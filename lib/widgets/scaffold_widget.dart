@@ -19,21 +19,21 @@ class ScaffoldWidget extends StatelessWidget {
                 onSelected: (value) => Navigator.pushNamed(context, value),
                 itemBuilder: (context) {
                   return [
-                    const PopupMenuItem<String>(
+                    PopupMenuItem<String>(
                       value: '/v2/',
-                      child: Text(Label.titleSecond),
+                      child: Text(Label.titleHome(!isFirstVersion)),
                     ),
                   ];
                 },
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
-                  children: const [
-                    Text(Label.titleFirst),
-                    Icon(Icons.arrow_drop_down),
+                  children: [
+                    Text(Label.titleHome(isFirstVersion)),
+                    const Icon(Icons.arrow_drop_down),
                   ],
                 ),
               )
-            : const Text(Label.titleSecond),
+            : Text(Label.titleHome(isFirstVersion)),
         actions: [
           IconButton(
               onPressed: () {

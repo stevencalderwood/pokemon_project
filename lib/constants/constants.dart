@@ -3,21 +3,21 @@ abstract class Constant {
   static const int pokemonMin = 1;
   static const int pokemonMax = 898;
 
-  /// char var: a-z and hyphen (-)
-  ///
-  /// constraints: hyphen is not allowed in first or last position
-  static const String regex = r'^(?!-|.*-$)^[a-z-]+$';
+  /// char var: a-z, 0-9 and hyphen (-)
+  /// constraints:
+  /// hyphen is not allowed in first or last position
+  /// numbers are not allowed in the first position
+  static const String regex = r'^(?![0-9-]|.*-$)^[a-z0-9-]+$';
   static const String jsonPath = 'data/pokemon_data.json';
 }
 
 abstract class Label {
+  static const String v1 = 'v1';
+  static const String v2 = 'v2';
   static const String appName = 'Pokemon API Project';
   static const String error = 'There was a problem. Please try later';
   static const String invalidId = 'Invalid Id';
   static const String invalidName = 'Invalid name';
-  static const String titleFirst = 'Pokemon Project v1';
-  static const String titleSecond = 'Pokemon Project v2';
-  static const String titleSearch = 'Search Pokemon';
   static const String inputHint = 'Please insert name or ID (1-898)';
   static const String pokemonNotFound = 'No pokemon was found';
   static const String maybeLookingFor = 'Maybe you were looking for...';
@@ -29,5 +29,9 @@ abstract class Label {
       'While the info about a specific Pokemon comes from the API.';
   static const String sortById = 'SORT BY ID';
   static const String sortByName = 'SORT BY NAME';
-  static String resultsNumber({required int displayed, required int total}) => '$displayed of $total results';
+  static const String scrollTop = 'SCROLL TO TOP';
+  static const String haveFun = 'Have fun!';
+  static String titleHome(bool isFirstVersion) => 'Pokemon Project ${isFirstVersion ? v1 : v2}';
+  static String titleSearch(bool isFirstVersion) => 'Search Pokemon ${isFirstVersion ? v1 : v2}';
+  static String resultsNumber(int total) => '$total ${total == 1 ? 'result' : 'results'}';
 }

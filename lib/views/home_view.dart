@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:pokemon_project/controllers/controller_api.dart';
 import 'package:pokemon_project/controllers/controller_json.dart';
+import 'package:pokemon_project/widgets/results_widget.dart';
 import 'package:pokemon_project/widgets/scaffold_widget.dart';
 import 'package:pokemon_project/widgets/loading_widget.dart';
-import 'package:pokemon_project/widgets/sort_button_widget.dart';
+import 'package:pokemon_project/widgets/buttons_widget.dart';
+import 'package:pokemon_project/constants/constants.dart';
 
 class HomeView extends StatefulWidget {
   final ControllerApi? controllerApi;
@@ -19,21 +21,15 @@ class _HomeViewState extends State<HomeView> {
   final List<Widget> _pokemonWidgets = [];
   bool _isLoading = true;
 
+  /// Handles all the user requests to the controller
   Future<void> _getPokemon() async {
-    late final List<Widget> result;
-    if (widget.controllerApi != null) {
-      result = await widget.controllerApi!.getPokemon();
-    } else {
-      result = await widget.controllerJson!.getPokemon();
-    }
+    final List<Widget> result = await widget.controllerApi?.getPokemon() ?? await widget.controllerJson!.getPokemon();
     if (result.isEmpty) {
       _scrollController.removeListener(_scrollListener);
       return;
     }
     _pokemonWidgets.addAll(result);
-    setState(() {
-      _isLoading = false;
-    });
+    setState(() => _isLoading = false);
   }
 
   void _scrollListener() async {
@@ -43,12 +39,18 @@ class _HomeViewState extends State<HomeView> {
     }
   }
 
-  void _sort() {
-    setState(() => _isLoading = true);
-    widget.controllerJson!.sortPokemon();
-    _scrollController.jumpTo(0);
-    _pokemonWidgets.clear();
-    _getPokemon();
+  /// Returns a function for the Sort Button if the controller allows this functionality.
+  void Function()? _sort() {
+    if (widget.controllerJson != null) {
+      return () {
+        setState(() => _isLoading = true);
+        widget.controllerJson!.sortPokemon();
+        _scrollController.jumpTo(0);
+        _pokemonWidgets.clear();
+        _getPokemon();
+      };
+    }
+    return null;
   }
 
   @override
@@ -62,7 +64,6 @@ class _HomeViewState extends State<HomeView> {
   @override
   void dispose() {
     _scrollController.dispose();
-    widget.controllerApi?.reset();
     widget.controllerJson?.reset();
     super.dispose();
   }
@@ -71,23 +72,27 @@ class _HomeViewState extends State<HomeView> {
   Widget build(BuildContext context) {
     return ScaffoldWidget(
       isFirstVersion: widget.controllerApi != null,
-      body: Column(
-        children: [
-          if (widget.controllerJson != null)
-            SortButtonWidget(sort: _sort, isAlphabetic: widget.controllerJson!.isAlphabetic),
-          Expanded(
-            child: _isLoading
-                ? const LoadingWidget()
-                : SingleChildScrollView(
+      body: _isLoading
+          ? const LoadingWidget()
+          : Column(
+              children: [
+                ButtonsWidget(
+                  scrollController: _scrollController,
+                  sort: _sort(),
+                  isAlphabetic: widget.controllerJson?.isAlphabetic,
+                ),
+                const ResultsWidget(total: Constant.pokemonMax),
+                Expanded(
+                  child: SingleChildScrollView(
                     controller: _scrollController,
                     child: Padding(
                       padding: const EdgeInsets.only(top: 5),
                       child: Column(children: _pokemonWidgets),
                     ),
                   ),
-          ),
-        ],
-      ),
+                ),
+              ],
+            ),
     );
   }
 }

@@ -1,10 +1,5 @@
 # pokemon_project
 
-## Next Steps:
-1. Review the results number widget, now is unwatchable
-2. Review the function for the input widget
-3. Consider making a strict distinction between home and search functionality for the controllers.
-
 ## Version 1:
 This version takes all the data from **pokeapi.co**, at every full scroll the App will call the API 
 for the next 20 pokemon.
@@ -25,13 +20,12 @@ Like the other pages the results, if necessary, will also be displayed following
 1. Constants ALL
 2. Services ALL
 3. Models ALL
-4. Controllers (Provider)
+4. Widgets ALL
+5. Controllers ALL
+6. Views ALL
 
 ## Improvements:
 1. Route names are hard coded;
 2. Implements equality operator and hashCode overrides for the models;
 
-## Constructors in dart
-https://dart.dev/guides/language/language-tour#using-constructors
-https://www.freecodecamp.org/news/constructors-in-dart/
 
