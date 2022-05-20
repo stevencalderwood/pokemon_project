@@ -5,7 +5,10 @@ A Flutter App project using data from the [pokeapi.co](https://pokeapi.co/api/v2
 The two versions use the same three views (**Home**, **Search**, **Info**) but differs in the capability of their 
 controller.
 
-Packages used: [http 0.13.4](https://pub.dev/packages/http).
+* Dart: 2.17.0
+* Flutter: 3.0.0
+* Packages: [http 0.13.4](https://pub.dev/packages/http).
+* Tested on Android API 29 & 31.
 
 ## Version 1:
 This version takes all the data from the API, at every full scroll the App make a request for the next 20 Pokemon.
