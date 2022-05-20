@@ -22,7 +22,6 @@ class _InfoViewState extends State<InfoView> {
   late final PokemonInfo _pokemon;
 
   void _getPokemonInfo() async {
-    setState(() => _isLoading = false);
     try {
       _pokemon = (widget.pokemonInfo?.copyWith() ?? await Api.getPokemonInfo(url: widget.pokemon.url))!;
     } catch (e) {
