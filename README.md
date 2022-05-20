@@ -1,6 +1,7 @@
 # pokemon_project
 
 A Flutter App project using data from the [pokeapi.co](https://pokeapi.co/api/v2/pokemon/).
+
 The two versions use the same three views (**Home**, **Search**, **Info**) but differs in the capability of their 
 controller.
 
